@@ -5,7 +5,11 @@ module JackalGame
     attr_reader :map
 
     def initialize
-      @map = [0] * 81
+      @map = (-121..-1).to_a
+    end
+
+    def shuffle seed
+      @map.shuffle!
     end
 
     def to_json options={}

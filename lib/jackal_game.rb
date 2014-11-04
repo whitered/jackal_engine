@@ -4,6 +4,7 @@ module JackalGame
 
 end
 
+require 'jackal_game/gamestate'
 require 'jackal_game/map'
-require 'jackal_game/game'
+require 'jackal_game/player'
 
