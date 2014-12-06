@@ -63,7 +63,17 @@ module JackalGame
 
 
     def unit &block
-      @units << Unit.new(&block)
+      u = Unit.new(&block)
+      u.id = @units.length
+      @units << u
+    end
+
+
+
+    def move action
+      unit = @units[action.unit]
+      location = action.location
+      unit.location location
     end
 
   end
