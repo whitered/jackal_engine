@@ -73,6 +73,12 @@ module JackalGame
     def move action
       unit = @units[action.unit]
       location = action.location
+      tile = @map[location]
+      if tile == 0
+        tile = rand(45) + 1
+        @map[location] = tile
+      end
+      action.tile = tile
       unit.location location
     end
 
