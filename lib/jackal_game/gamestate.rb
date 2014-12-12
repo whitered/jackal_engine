@@ -2,12 +2,13 @@ module JackalGame
 
   class GameState
 
-    def self.initial
+    def self.initial options={}
+      num_of_players = options[:num_of_players] || 4
       GameState.new do
         map [0] * 121
-        p1 = player
+        players = 1.upto(num_of_players).map { player }
         unit do
-          location 115
+          location 1
         end
         unit do
           location 100
@@ -58,12 +59,13 @@ module JackalGame
 
     def player &block
       p = Player.new &block
+      p.id = @players.length
       @players << p
     end
 
 
     def unit &block
-      u = Unit.new(&block)
+      u = Unit.new &block
       u.id = @units.length
       @units << u
     end
