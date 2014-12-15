@@ -22,7 +22,7 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units
+    attr_reader :map, :players, :units, :current_move_player_id
 
 
     def initialize data={}, &block
@@ -47,7 +47,8 @@ module JackalGame
         :json_class => self.class.name,
         :map => @map.as_json,
         :players => @players.as_json,
-        :units => @units.as_json
+        :units => @units.as_json,
+        :current_move_player_id => current_move_player_id
       }
     end
 
