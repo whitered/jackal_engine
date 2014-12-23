@@ -48,7 +48,7 @@ module JackalGame
         :map => @map.as_json,
         :players => @players.as_json,
         :units => @units.as_json,
-        :current_move_player_id => current_move_player_id
+        :current_move_player_id => @current_move_player_id
       }
     end
 
@@ -72,8 +72,13 @@ module JackalGame
     end
 
 
+    def start
+      @current_move_player_id = 0
+    end
+
 
     def move action
+      return 'wrong turn' unless current_move_player_id == action.current_player
       unit = @units[action.unit]
       location = action.location
       tile = @map[location]
@@ -83,6 +88,7 @@ module JackalGame
       end
       action.tile = tile
       unit.location location
+      action
     end
 
   end
