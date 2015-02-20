@@ -38,6 +38,8 @@ module JackalGame
         @units << u
       end if data.has_key?('units')
 
+      @current_move_player_id = data['current_move_player_id']
+
       instance_eval &block if block_given?
     end
 
@@ -78,7 +80,8 @@ module JackalGame
 
 
     def move action
-      return 'wrong turn' unless current_move_player_id == action.current_player
+      return 'wrong turn' unless current_move_player_id == action.current_move_player_id
+
       unit = @units[action.unit]
       location = action.location
       tile = @map[location]
@@ -88,6 +91,10 @@ module JackalGame
       end
       action.tile = tile
       unit.location location
+
+      next_player_id = (action.current_move_player_id + 1) % players.size
+      action.current_move_player_id = next_player_id
+      @current_move_player_id = next_player_id
       action
     end
 
