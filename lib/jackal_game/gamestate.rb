@@ -4,16 +4,27 @@ module JackalGame
 
     def self.initial options={}
       num_of_players = options[:num_of_players] || 4
-      GameState.new do
-        map [0] * 121
-        players = 1.upto(num_of_players).map { player }
-        unit do
-          location 1
-        end
-        unit do
-          location 100
-        end
-      end
+      map_size = 11
+
+      map = Map.new('size' => map_size)
+
+      players = 1.upto(num_of_players).map { |id| Player.new('id' => id) }
+
+      units = []
+      units << Unit.new('location' => map.get_tile_id(map_size / 2, 0))
+      units << Unit.new('location' => map.get_tile_id(map_size - 1, map_size / 2))
+      units << Unit.new('location' => map.get_tile_id(map_size / 2, map_size - 1))
+      units << Unit.new('location' => map.get_tile_id(0, map_size / 2))
+
+      units.each_with_index { |u, i| u.id = i }
+
+      data = {
+        'map' => map,
+        'players' => players,
+        'units' => units
+      }
+
+      GameState.new data
     end
 
 
@@ -25,22 +36,11 @@ module JackalGame
     attr_reader :map, :players, :units, :current_move_player_id
 
 
-    def initialize data={}, &block
-      @map = data['map'] || []
-
-      @players = []
-      data['players'].each do |p|
-        @players << p
-      end if data.has_key?('players')
-
-      @units = []
-      data['units'].each do |u|
-        @units << u
-      end if data.has_key?('units')
-
+    def initialize data={}
+      @map = data['map'] || JackalGame::Map.new 
+      @players = data['players'] || []
+      @units = data['units'] || []
       @current_move_player_id = data['current_move_player_id']
-
-      instance_eval &block if block_given?
     end
 
 
@@ -55,25 +55,6 @@ module JackalGame
     end
 
 
-    def map value
-      @map = value
-    end
-
-
-    def player &block
-      p = Player.new &block
-      p.id = @players.length
-      @players << p
-    end
-
-
-    def unit &block
-      u = Unit.new &block
-      u.id = @units.length
-      @units << u
-    end
-
-
     def start
       @current_move_player_id = 0
     end
@@ -84,13 +65,9 @@ module JackalGame
 
       unit = @units[action.unit]
       location = action.location
-      tile = @map[location]
-      if tile == 0
-        tile = rand(45) + 1
-        @map[location] = tile
-      end
-      action.tile = tile
-      unit.location location
+      @map.open_tile(location) if @map.at(location) == 0
+      action.tile = @map.at(location)
+      unit.location = location
 
       next_player_id = (action.current_move_player_id + 1) % players.size
       action.current_move_player_id = next_player_id

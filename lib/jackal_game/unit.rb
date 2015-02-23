@@ -8,13 +8,12 @@ module JackalGame
     end
 
 
-    attr_accessor :id
+    attr_accessor :id, :location
 
 
-    def initialize data={}, &block
+    def initialize data={}
       @location = data['location']
       @id = data['id']
-      instance_eval &block if block_given?
     end
 
 
@@ -25,13 +24,6 @@ module JackalGame
         :location => @location.as_json
       }
     end
-
-
-    def location val = nil
-      @location = val unless val.nil?
-      @location
-    end
-
 
   end
 

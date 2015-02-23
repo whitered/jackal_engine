@@ -11,9 +11,8 @@ module JackalGame
     attr_accessor :id
     
 
-    def initialize data={}, &block
+    def initialize data={}
       @id = data['id']
-      instance_eval &block if block_given?
     end
 
 

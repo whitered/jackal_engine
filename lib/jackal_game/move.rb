@@ -8,10 +8,10 @@ module JackalGame
 
 
     def initialize params
-      @current_move_player_id = params[:current_move_player_id]
-      @action = params[:action]
-      @unit = params[:unit].to_i
-      @location = params[:location].to_i
+      @current_move_player_id = params['current_move_player_id']
+      @action = params['action']
+      @unit = params['unit'].to_i
+      @location = params['location'].to_i
     end
   end
 end
