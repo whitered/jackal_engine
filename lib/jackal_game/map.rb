@@ -2,6 +2,23 @@ module JackalGame
 
   class Map
 
+    TILE_OCEAN = 46
+
+
+    def self.generate options={}
+      size = options['size'] || 13
+      tiles = []
+      tiles.concat [TILE_OCEAN] * size
+      (size - 2).times do
+        tiles << TILE_OCEAN
+        tiles.concat [0] * (size - 2)
+        tiles << TILE_OCEAN
+      end
+      tiles.concat [TILE_OCEAN] * size
+      Map.new 'size' => size, 'tiles' => tiles
+    end
+
+
     def self.json_create data
       new data
     end

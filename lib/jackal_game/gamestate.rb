@@ -4,9 +4,9 @@ module JackalGame
 
     def self.initial options={}
       num_of_players = options[:num_of_players] || 4
-      map_size = 11
+      map_size = 13
 
-      map = Map.new('size' => map_size)
+      map = Map.generate('size' => map_size)
 
       players = 1.upto(num_of_players).map { |id| Player.new('id' => id) }
 
@@ -37,7 +37,7 @@ module JackalGame
 
 
     def initialize data={}
-      @map = data['map'] || JackalGame::Map.new 
+      @map = data['map'] || Map.new 
       @players = data['players'] || []
       @units = data['units'] || []
       @current_move_player_id = data['current_move_player_id']
