@@ -11,10 +11,16 @@ module JackalGame
       players = 1.upto(num_of_players).map { |id| Player.new('id' => id) }
 
       units = []
-      units << Unit.new('location' => map.get_tile_id(map_size / 2, 0))
-      units << Unit.new('location' => map.get_tile_id(map_size - 1, map_size / 2))
-      units << Unit.new('location' => map.get_tile_id(map_size / 2, map_size - 1))
-      units << Unit.new('location' => map.get_tile_id(0, map_size / 2))
+
+      players.each do |player|
+        location = case player.id
+                   when 1 then map.get_tile_id(map_size / 2, 0)
+                   when 2 then map.get_tile_id(map_size / 2, map_size - 1)
+                   when 3 then map.get_tile_id(map_size - 1, map_size / 2)
+                   when 4 then map.get_tile_id(0, map_size / 2)
+                   end
+        3.times { units << Unit.new('location' => location, 'player_id' => player.id) }
+      end
 
       units.each_with_index { |u, i| u.id = i }
 
