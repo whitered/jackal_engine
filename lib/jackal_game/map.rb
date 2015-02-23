@@ -45,7 +45,7 @@ module JackalGame
 
 
     def at location
-      @tiles[location]
+      Tile.new @tiles[location]
     end
 
 
@@ -54,7 +54,7 @@ module JackalGame
     end
 
 
-    def tiles_close a, b
+    def locations_close a, b
       return false if a==b
       ax, ay = a.divmod @size
       bx, by = b.divmod @size

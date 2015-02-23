@@ -64,12 +64,20 @@ module JackalGame
       return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
       unit = @units[action.unit]
-      return 'wrong step' unless @map.tiles_close(unit.location, action.location)
+      return 'wrong step' unless @map.locations_close(unit.location, action.location)
 
       location = action.location
-      @map.open_tile(location) if @map.at(location) == 0
-      action.tile = @map.at(location)
-      unit.location = location
+      tile = @map.at(location)
+      return 'inaccessible tile' unless tile.accessible?
+
+      unless tile.explored?
+        @map.open_tile(location)
+        tile = @map.at(location)
+      end
+
+      action.tile = @map.at(location).type
+      unit.location = location if tile.accessible?
+      action.unit_location = unit.location
 
       next_player_id = (action.current_move_player_id + 1) % players.size
       action.current_move_player_id = next_player_id
