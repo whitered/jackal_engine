@@ -8,16 +8,16 @@ module JackalGame
 
       map = Map.generate('size' => map_size)
 
-      players = 1.upto(num_of_players).map { |id| Player.new('id' => id) }
+      players = 0.upto(num_of_players - 1).map { |id| Player.new('id' => id) }
 
       units = []
 
       players.each do |player|
         location = case player.id
-                   when 1 then map.get_tile_id(map_size / 2, 0)
-                   when 2 then map.get_tile_id(map_size / 2, map_size - 1)
-                   when 3 then map.get_tile_id(map_size - 1, map_size / 2)
-                   when 4 then map.get_tile_id(0, map_size / 2)
+                   when 0 then map.get_tile_id(map_size / 2, 0)
+                   when 1 then map.get_tile_id(map_size / 2, map_size - 1)
+                   when 2 then map.get_tile_id(map_size - 1, map_size / 2)
+                   when 3 then map.get_tile_id(0, map_size / 2)
                    end
         3.times { units << Unit.new('location' => location, 'player_id' => player.id) }
       end
@@ -70,6 +70,7 @@ module JackalGame
       return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
       unit = @units[action.unit]
+      return 'wrong unit' unless unit.player_id == current_move_player_id
       return 'wrong step' unless @map.locations_close(unit.location, action.location)
 
       location = action.location
