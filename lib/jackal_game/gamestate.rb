@@ -64,6 +64,8 @@ module JackalGame
       return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
       unit = @units[action.unit]
+      return 'wrong step' unless @map.tiles_close(unit.location, action.location)
+
       location = action.location
       @map.open_tile(location) if @map.at(location) == 0
       action.tile = @map.at(location)

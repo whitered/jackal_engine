@@ -37,6 +37,14 @@ module JackalGame
     end
 
 
+    def tiles_close a, b
+      return false if a==b
+      ax, ay = a.divmod @size
+      bx, by = b.divmod @size
+      (ax - bx).abs <= 1 && (ay - by).abs <= 1
+    end
+
+
   end
 
 end
