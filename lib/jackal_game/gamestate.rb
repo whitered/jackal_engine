@@ -13,12 +13,7 @@ module JackalGame
       units = []
 
       players.each do |player|
-        location = case player.id
-                   when 0 then map.get_tile_id(map_size / 2, 0)
-                   when 1 then map.get_tile_id(map_size / 2, map_size - 1)
-                   when 2 then map.get_tile_id(map_size - 1, map_size / 2)
-                   when 3 then map.get_tile_id(0, map_size / 2)
-                   end
+        location = map.spawn player.id
         3.times { units << Unit.new('location' => location, 'player_id' => player.id) }
       end
 
@@ -81,6 +76,10 @@ module JackalGame
         @map.open_tile(location)
         tile = @map.at(location)
       end
+
+      captured_units = @units.select{ |unit| unit.location == location && unit.player_id != current_move_player_id }
+      captured_units.each { |unit| unit.location = @map.spawn(unit.player_id) }
+      action.captured_units = captured_units.map(&:id)
 
       action.tile = @map.at(location).type
       unit.location = location if tile.accessible?

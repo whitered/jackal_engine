@@ -62,6 +62,16 @@ module JackalGame
     end
 
 
+    def spawn player_id
+      case player_id
+      when 0 then get_tile_id(@size / 2, 0)
+      when 1 then get_tile_id(@size / 2, @size - 1)
+      when 2 then get_tile_id(@size - 1, @size / 2)
+      when 3 then get_tile_id(0, @size / 2)
+      end
+    end
+
+
   end
 
 end
