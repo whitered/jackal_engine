@@ -14,7 +14,8 @@ module JackalGame
 
       players.each do |player|
         location = map.spawn player.id
-        3.times { units << Unit.new('location' => location, 'player_id' => player.id) }
+        units << Unit.new('location' => location, 'player_id' => player.id, 'type' => 'ship')
+        3.times { units << Unit.new('location' => location, 'player_id' => player.id, 'type' => 'pirate') }
       end
 
       units.each_with_index { |u, i| u.id = i }

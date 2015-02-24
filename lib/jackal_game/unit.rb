@@ -9,10 +9,11 @@ module JackalGame
 
 
     attr_accessor :id, :location
-    attr_reader :player_id
+    attr_reader :player_id, :type
 
 
     def initialize data={}
+      @type = data['type']
       @location = data['location']
       @id = data['id']
       @player_id = data['player_id']
@@ -23,6 +24,7 @@ module JackalGame
       {
         :json_class => self.class.name,
         :id => @id,
+        :type => @type,
         :player_id => @player_id,
         :location => @location.as_json
       }
