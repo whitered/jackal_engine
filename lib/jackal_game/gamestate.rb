@@ -71,7 +71,7 @@ module JackalGame
 
       location = action.location
       tile = @map.at(location)
-      return 'inaccessible tile' unless tile.accessible?
+      return 'inaccessible tile' unless tile.accessible?(unit)
 
       unless tile.explored?
         @map.open_tile(location)
@@ -79,11 +79,20 @@ module JackalGame
       end
 
       captured_units = @units.select{ |unit| unit.location == location && unit.player_id != current_move_player_id }
-      captured_units.each { |unit| unit.location = @map.spawn(unit.player_id) }
+      captured_units.each do |unit|
+        captured_ship = @units.select { |u| u.player_id == unit.player_id && u.type == 'ship' }.first
+        unit.location = captured_ship.location
+      end
       action.captured_units = captured_units.map(&:id)
 
+      if unit.ship?
+        sailors = @units.select{ |u| u.location == unit.location && u != unit }
+        sailors.each { |u| u.location = location }
+        action.sailors = sailors.map(&:id)
+      end
+
       action.tile = @map.at(location).type
-      unit.location = location if tile.accessible?
+      unit.location = location if tile.accessible?(unit)
       action.unit_location = unit.location
 
       next_player_id = (action.current_move_player_id + 1) % players.size

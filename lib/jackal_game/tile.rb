@@ -19,8 +19,12 @@ module JackalGame
     end
 
 
-    def accessible?
-      ![T_OCEAN, T_CROCODILE].include? @type
+    def accessible? unit
+      if unit.pirate?
+        ![T_OCEAN, T_CROCODILE].include? @type
+      elsif unit.ship?
+        @type == T_OCEAN
+      end
     end
 
 

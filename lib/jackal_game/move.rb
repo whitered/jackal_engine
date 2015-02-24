@@ -4,7 +4,7 @@ module JackalGame
 
 
     attr_reader :unit, :location
-    attr_accessor :tile, :current_move_player_id, :unit_location, :captured_units
+    attr_accessor :tile, :current_move_player_id, :unit_location, :captured_units, :sailors
 
 
     def initialize params

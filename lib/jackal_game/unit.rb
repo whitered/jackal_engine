@@ -30,6 +30,16 @@ module JackalGame
       }
     end
 
+
+    def ship?
+      @type == 'ship'
+    end
+
+
+    def pirate?
+      @type == 'pirate'
+    end
+
   end
 
 end
