@@ -3,8 +3,17 @@ module JackalGame
   class Tile
 
     T_UNEXPLORED = 0
-    T_OCEAN = 46
+    T_ROME_1 = 24
+    T_ROME_2 = 25
+    T_ROME_3 = 26
     T_CROCODILE = 32
+    T_COIN_1 = 40
+    T_COIN_2 = 41
+    T_COIN_3 = 42
+    T_COIN_4 = 43
+    T_COIN_5 = 44
+    T_CHEST = 45
+    T_OCEAN = 46
 
 
     attr_reader :type
@@ -24,6 +33,21 @@ module JackalGame
         ![T_OCEAN, T_CROCODILE].include? @type
       elsif unit.ship?
         @type == T_OCEAN
+      end
+    end
+
+
+    def get_loot
+      case @type
+      when T_ROME_1 then Array.new(1) { Loot.new('type' => 'rome') }
+      when T_ROME_2 then Array.new(2) { Loot.new('type' => 'rome') }
+      when T_ROME_3 then Array.new(3) { Loot.new('type' => 'rome') }
+      when T_COIN_1 then Array.new(1) { Loot.new('type' => 'coin') }
+      when T_COIN_2 then Array.new(2) { Loot.new('type' => 'coin') }
+      when T_COIN_3 then Array.new(3) { Loot.new('type' => 'coin') }
+      when T_COIN_4 then Array.new(4) { Loot.new('type' => 'coin') }
+      when T_COIN_5 then Array.new(5) { Loot.new('type' => 'coin') }
+      when T_CHEST then [ Loot.new('type' => 'chest') ]
       end
     end
 

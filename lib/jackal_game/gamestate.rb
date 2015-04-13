@@ -35,13 +35,14 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units, :current_move_player_id
+    attr_reader :map, :players, :units, :loot, :current_move_player_id
 
 
     def initialize data={}
       @map = data['map'] || Map.new 
       @players = data['players'] || []
       @units = data['units'] || []
+      @loot = data['loot'] || [] 
       @current_move_player_id = data['current_move_player_id']
     end
 
@@ -52,6 +53,7 @@ module JackalGame
         :map => @map.as_json,
         :players => @players.as_json,
         :units => @units.as_json,
+        :loot => @loot.as_json,
         :current_move_player_id => @current_move_player_id
       }
     end
@@ -76,6 +78,11 @@ module JackalGame
       unless tile.explored?
         @map.open_tile(location)
         tile = @map.at(location)
+        loot = tile.get_loot
+        if loot
+          @loot.concat loot.map { |l| l.location = location; l }
+          action.loot = loot.map &:type
+        end
       end
 
       captured_units = @units.select{ |unit| unit.location == location && unit.player_id != current_move_player_id }
