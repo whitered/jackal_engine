@@ -83,7 +83,7 @@ module JackalGame
         if found_loot
           lid = @loot.size
           @loot.concat found_loot.map { |l| l.location = location; l.id = lid; lid += 1; l }
-          action.found_loot = found_loot.map &:type
+          action.found_loot = found_loot.map { |l| { id: l.id, location: location, type: l.type } }
         end
       end
 
