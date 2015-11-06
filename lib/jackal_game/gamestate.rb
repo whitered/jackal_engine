@@ -80,7 +80,8 @@ module JackalGame
         tile = @map.at(location)
         loot = tile.get_loot
         if loot
-          @loot.concat loot.map { |l| l.location = location; l }
+          lid = @loot.size
+          @loot.concat loot.map { |l| l.location = location; l.id = lid; lid += 1; l }
           action.loot = loot.map &:type
         end
       end
