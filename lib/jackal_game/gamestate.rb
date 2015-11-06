@@ -73,8 +73,8 @@ module JackalGame
 
       location = action.location
       tile = @map.at(location)
-      loot = @loot[action.loot] unless action.loot.nil?
-      return 'inaccessible tile' unless tile.accessible?(unit, loot)
+      carried_loot = @loot[action.carried_loot] unless action.carried_loot.nil?
+      return 'inaccessible tile' unless tile.accessible?(unit, carried_loot)
 
       unless tile.explored?
         @map.open_tile(location)
@@ -83,7 +83,7 @@ module JackalGame
         if found_loot
           lid = @loot.size
           @loot.concat found_loot.map { |l| l.location = location; l.id = lid; lid += 1; l }
-          action.loot = found_loot.map &:type
+          action.found_loot = found_loot.map &:type
         end
       end
 
@@ -103,7 +103,7 @@ module JackalGame
       action.tile = @map.at(location).type
       unit.location = location
       action.unit_location = unit.location
-      loot.location = location unless loot.nil?
+      carried_loot.location = location unless carried_loot.nil?
 
       next_player_id = (action.current_move_player_id + 1) % players.size
       action.current_move_player_id = next_player_id

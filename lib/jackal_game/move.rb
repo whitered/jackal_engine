@@ -3,8 +3,8 @@ module JackalGame
   class Move
 
 
-    attr_reader :unit, :location, :loot
-    attr_accessor :tile, :current_move_player_id, :unit_location, :captured_units, :sailors, :loot
+    attr_reader :unit, :location, :carried_loot
+    attr_accessor :tile, :current_move_player_id, :unit_location, :captured_units, :sailors, :found_loot
 
 
     def initialize params
@@ -12,7 +12,7 @@ module JackalGame
       @action = params['action']
       @unit = params['unit'].to_i
       @location = params['location'].to_i
-      @loot = params['loot'].to_i unless params['loot'].empty?
+      @carried_loot = params['carried_loot'].to_i unless params['carried_loot'].empty?
     end
   end
 end
