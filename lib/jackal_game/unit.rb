@@ -8,7 +8,7 @@ module JackalGame
     end
 
 
-    attr_accessor :id, :location
+    attr_accessor :id, :location, :loot_id
     attr_reader :player_id, :type
 
 
@@ -17,6 +17,7 @@ module JackalGame
       @location = data['location']
       @id = data['id']
       @player_id = data['player_id']
+      @loot_id = data['loot_id']
     end
 
 
@@ -26,7 +27,8 @@ module JackalGame
         :id => @id,
         :type => @type,
         :player_id => @player_id,
-        :location => @location.as_json
+        :location => @location.as_json,
+        :loot_id => @loot_id
       }
     end
 
