@@ -14,6 +14,17 @@ module JackalGame
     T_COIN_5 = 44
     T_CHEST = 45
     T_OCEAN = 46
+    T_SLIDE_1 = 16
+    T_SLIDE_2 = 17
+    T_SLIDE_1T = 18
+    T_SLIDE_2T = 19
+    T_SLIDE_4 = 20
+    T_SLIDE_4T = 21
+    T_SLIDE_3 = 22
+    T_SLIDE_FWD = 23
+    
+
+    TRANSIT = [T_SLIDE_1, T_SLIDE_2, T_SLIDE_1T, T_SLIDE_2T, T_SLIDE_4, T_SLIDE_4T, T_SLIDE_3, T_SLIDE_FWD]
 
 
     attr_reader :type
@@ -52,6 +63,11 @@ module JackalGame
       when T_COIN_5 then Array.new(5) { Loot.new('type' => 'coin') }
       when T_CHEST then [ Loot.new('type' => 'chest') ]
       end
+    end
+
+
+    def transit?
+      TRANSIT.include? @type
     end
 
 

@@ -35,7 +35,7 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units, :loot, :current_move_player_id
+    attr_reader :map, :players, :units, :loot, :current_move_player_id, :current_move_unit_id
 
 
     def initialize data={}
@@ -44,6 +44,7 @@ module JackalGame
       @units = data['units'] || []
       @loot = data['loot'] || [] 
       @current_move_player_id = data['current_move_player_id']
+      @current_move_unit_id = data['current_move_unit_id']
     end
 
 
@@ -54,7 +55,8 @@ module JackalGame
         :players => @players.as_json,
         :units => @units.as_json,
         :loot => @loot.as_json,
-        :current_move_player_id => @current_move_player_id
+        :current_move_player_id => @current_move_player_id,
+        :current_move_unit_id => @current_move_unit_id
       }
     end
 
@@ -68,7 +70,8 @@ module JackalGame
       return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
       unit = @units[action.unit]
-      return 'wrong unit' unless unit.player_id == current_move_player_id
+      return 'wrong player' unless unit.player_id == current_move_player_id
+      return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
       return 'wrong step' unless @map.locations_close(unit.location, action.location)
 
       location = action.location
@@ -105,9 +108,16 @@ module JackalGame
       action.unit_location = unit.location
       carried_loot.location = location unless carried_loot.nil?
 
-      next_player_id = (action.current_move_player_id + 1) % players.size
-      action.current_move_player_id = next_player_id
-      @current_move_player_id = next_player_id
+      if tile.transit?
+        @current_move_unit_id = unit.id
+        action.current_move_unit_id = unit.id
+      else
+        @current_move_unit_id = nil
+        next_player_id = (action.current_move_player_id + 1) % players.size
+        action.current_move_player_id = next_player_id
+        @current_move_player_id = next_player_id
+      end
+
       action
     end
 
