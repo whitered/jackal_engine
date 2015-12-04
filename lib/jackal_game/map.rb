@@ -2,7 +2,7 @@ module JackalGame
 
   class Map
 
-    TILE_OCEAN = 46
+    TILE_OCEAN = JackalGame::Tile::T_OCEAN * 4
 
 
     def self.generate options={}
@@ -50,7 +50,7 @@ module JackalGame
 
 
     def open_tile location
-      @tiles[location] = rand(45) + 1
+      @tiles[location] = rand(45 * 4) + 1
     end
 
 

@@ -103,7 +103,7 @@ module JackalGame
         action.sailors = sailors.map(&:id)
       end
 
-      action.tile = @map.at(location).type
+      action.tile = @map.at(location).value
       unit.location = location
       action.unit_location = unit.location
       carried_loot.location = location unless carried_loot.nil?

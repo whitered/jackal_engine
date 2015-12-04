@@ -27,32 +27,42 @@ module JackalGame
     TRANSIT = [T_SLIDE_1, T_SLIDE_2, T_SLIDE_1T, T_SLIDE_2T, T_SLIDE_4, T_SLIDE_4T, T_SLIDE_3, T_SLIDE_FWD]
 
 
-    attr_reader :type
+    attr_reader :value
 
-    def initialize type
-      @type = type
+    def initialize value
+      @value = value
     end
 
 
+    def type
+      value / 4
+    end
+
+
+    def rotation
+      value % 4
+    end
+    
+
     def explored?
-      @type != T_UNEXPLORED
+      type != T_UNEXPLORED
     end
 
 
     def accessible? unit, loot
       if unit.pirate?
         puts 'accessible?', unit, loot
-        return false if [T_OCEAN, T_CROCODILE].include? @type
+        return false if [T_OCEAN, T_CROCODILE].include? type
         return false if loot and !explored?
         true
       elsif unit.ship?
-        @type == T_OCEAN
+        type == T_OCEAN
       end
     end
 
 
     def get_loot
-      case @type
+      case type
       when T_ROME_1 then Array.new(1) { Loot.new('type' => 'rome') }
       when T_ROME_2 then Array.new(2) { Loot.new('type' => 'rome') }
       when T_ROME_3 then Array.new(3) { Loot.new('type' => 'rome') }
@@ -67,7 +77,7 @@ module JackalGame
 
 
     def transit?
-      TRANSIT.include? @type
+      TRANSIT.include? type
     end
 
 
