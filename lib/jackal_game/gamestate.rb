@@ -35,7 +35,7 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units, :loot, :current_move_player_id, :current_move_unit_id, :current_move_unit_last_location
+    attr_reader :map, :players, :units, :loot, :current_move_player_id, :current_move_unit_id, :current_move_unit_prev_location
 
 
     def initialize data={}
@@ -45,7 +45,7 @@ module JackalGame
       @loot = data['loot'] || [] 
       @current_move_player_id = data['current_move_player_id']
       @current_move_unit_id = data['current_move_unit_id']
-      @current_move_unit_last_location = data['current_move_unit_last_location']
+      @current_move_unit_prev_location = data['current_move_unit_prev_location']
     end
 
 
@@ -58,7 +58,7 @@ module JackalGame
         :loot => @loot.as_json,
         :current_move_player_id => @current_move_player_id,
         :current_move_unit_id => @current_move_unit_id,
-        :current_move_unit_last_location => @current_move_unit_last_location
+        :current_move_unit_prev_location => @current_move_unit_prev_location
       }
     end
 
@@ -74,7 +74,7 @@ module JackalGame
       unit = @units[action.unit]
       return 'wrong player' unless unit.player_id == current_move_player_id
       return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
-      return 'wrong step' unless @map.allowed_step(unit.location, action.location, @current_move_unit_last_location)
+      return 'wrong step' unless @map.allowed_step(unit.location, action.location, @current_move_unit_prev_location)
 
       location = action.location
       tile = @map.at(location)
@@ -107,11 +107,11 @@ module JackalGame
 
       if tile.transit?
         @current_move_unit_id = unit.id
-        @current_move_unit_last_location = unit.location
+        @current_move_unit_prev_location = unit.location
         action.current_move_unit_id = unit.id
       else
         @current_move_unit_id = nil
-        @current_move_unit_last_location = nil
+        @current_move_unit_prev_location = nil
         next_player_id = (action.current_move_player_id + 1) % players.size
         action.current_move_player_id = next_player_id
         @current_move_player_id = next_player_id
