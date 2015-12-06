@@ -35,7 +35,7 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units, :loot, :current_move_player_id, :current_move_unit_id
+    attr_reader :map, :players, :units, :loot, :current_move_player_id, :current_move_unit_id, :current_move_unit_last_location
 
 
     def initialize data={}
@@ -45,6 +45,7 @@ module JackalGame
       @loot = data['loot'] || [] 
       @current_move_player_id = data['current_move_player_id']
       @current_move_unit_id = data['current_move_unit_id']
+      @current_move_unit_last_location = data['current_move_unit_last_location']
     end
 
 
@@ -56,7 +57,8 @@ module JackalGame
         :units => @units.as_json,
         :loot => @loot.as_json,
         :current_move_player_id => @current_move_player_id,
-        :current_move_unit_id => @current_move_unit_id
+        :current_move_unit_id => @current_move_unit_id,
+        :current_move_unit_last_location => @current_move_unit_last_location
       }
     end
 
@@ -72,7 +74,7 @@ module JackalGame
       unit = @units[action.unit]
       return 'wrong player' unless unit.player_id == current_move_player_id
       return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
-      return 'wrong step' unless @map.allowed_step(unit.location, action.location)
+      return 'wrong step' unless @map.allowed_step(unit.location, action.location, @current_move_unit_last_location)
 
       location = action.location
       tile = @map.at(location)
@@ -103,20 +105,22 @@ module JackalGame
         action.sailors = sailors.map(&:id)
       end
 
-      action.tile = @map.at(location).value
-      unit.location = location
-      action.unit_location = unit.location
-      carried_loot.location = location unless carried_loot.nil?
-
       if tile.transit?
         @current_move_unit_id = unit.id
+        @current_move_unit_last_location = unit.location
         action.current_move_unit_id = unit.id
       else
         @current_move_unit_id = nil
+        @current_move_unit_last_location = nil
         next_player_id = (action.current_move_player_id + 1) % players.size
         action.current_move_player_id = next_player_id
         @current_move_player_id = next_player_id
       end
+
+      action.tile = @map.at(location).value
+      unit.location = location
+      action.unit_location = unit.location
+      carried_loot.location = location unless carried_loot.nil?
 
       action
     end

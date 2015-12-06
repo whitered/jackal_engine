@@ -75,7 +75,6 @@ module JackalGame
 
     def accessible? unit, loot
       if unit.pirate?
-        puts 'accessible?', unit, loot
         return false if [T_OCEAN, T_CROCODILE].include? type
         return false if loot and !explored?
         true
@@ -86,7 +85,9 @@ module JackalGame
 
 
 
-    def allowed_moves
+    def allowed_moves prev_move
+      return [prev_move] if type == T_SLIDE_FWD
+
       unrotated_directions = case type
       when T_SLIDE_1 then TOP
       when T_SLIDE_1T then TR
