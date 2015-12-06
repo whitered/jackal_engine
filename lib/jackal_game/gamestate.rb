@@ -74,9 +74,12 @@ module JackalGame
       unit = @units[action.unit]
       return 'wrong player' unless unit.player_id == current_move_player_id
       return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
-      return 'wrong step' unless @map.allowed_step(unit.location, action.location, @current_move_unit_prev_location)
 
       location = action.location
+      move_vector = @map.vector unit.location, location
+      available_moves = @map.at(unit.location).available_moves(@current_move_unit_prev_location)
+      return 'wrong step' unless available_moves.include? move_vector
+
       tile = @map.at(location)
       carried_loot = @loot[action.carried_loot] unless action.carried_loot.nil?
       return 'inaccessible tile' unless tile.accessible?(unit, carried_loot)
@@ -109,6 +112,10 @@ module JackalGame
         @current_move_unit_id = unit.id
         @current_move_unit_prev_location = unit.location
         action.current_move_unit_id = unit.id
+
+        x, y = @map.get_tile_position location
+        available_moves = tile.available_moves(@map.vector(@current_move_unit_prev_location, location))
+        action.available_steps = available_moves.map { |m| @map.get_tile_id(x + m.first, y + m.last)}
       else
         @current_move_unit_id = nil
         @current_move_unit_prev_location = nil

@@ -44,29 +44,25 @@ module JackalGame
     end
 
 
+    def get_tile_position location
+      location.divmod(@size).reverse
+    end
+
+
     def at location
       Tile.new @tiles[location]
     end
 
 
-    def open_tile location
-      @tiles[location] = rand(45 * 4) + 1
+    def vector a, b
+      ay, ax = a.divmod @size
+      by, bx = b.divmod @size
+      [bx - ax, by - ay]
     end
 
 
-    def allowed_step from, to, last_location
-      a = at from
-      b = at to
-      ay, ax = from.divmod @size
-      by, bx = to.divmod @size
-      move = [bx - ax, by - ay]
-      prev_move = if last_location.present?
-        ly, lx = last_location.divmod(@size)
-        [ax - lx, ay - ly]
-                  end
-      allowed_moves = a.allowed_moves prev_move
-      puts 'move', move.to_s, 'prev_move', prev_move.to_s, 'allowed_moves', allowed_moves.to_s
-      allowed_moves.include? move
+    def open_tile location
+      @tiles[location] = rand(45 * 4) + 1
     end
 
 

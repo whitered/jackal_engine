@@ -85,7 +85,7 @@ module JackalGame
 
 
 
-    def allowed_moves prev_move
+    def available_moves prev_move
       return [prev_move] if type == T_SLIDE_FWD
 
       unrotated_directions = case type
