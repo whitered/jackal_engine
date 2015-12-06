@@ -2,6 +2,30 @@ module JackalGame
 
   class Tile
 
+    NONE = 0
+    TOP = 1
+    TR = 2
+    RIGHT = 4
+    BR = 8
+    BOTTOM = 16
+    BL = 32
+    LEFT = 64
+    TL = 128
+
+    DIRECTIONS = [
+      [0, -1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [-1, 1],
+      [-1, 0],
+      [-1, -1]
+    ]
+
+
+
+
     T_UNEXPLORED = 0
     T_ROME_1 = 24
     T_ROME_2 = 25
@@ -58,6 +82,30 @@ module JackalGame
       elsif unit.ship?
         type == T_OCEAN
       end
+    end
+
+
+
+    def allowed_moves
+      unrotated_directions = case type
+      when T_SLIDE_1 then TOP
+      when T_SLIDE_1T then TR
+      when T_SLIDE_2 then TOP | BOTTOM
+      when T_SLIDE_2T then TR | BL
+      when T_SLIDE_4 then TOP | RIGHT | BOTTOM | LEFT
+      when T_SLIDE_4T then TR | BR | BL | TL
+      when T_SLIDE_3 then TR | BOTTOM | LEFT
+      else TOP | TR | RIGHT | BR | BOTTOM | BL | LEFT | TL
+      end
+      
+      shift = rotation * 2
+      rotated_directions = (unrotated_directions << shift | unrotated_directions >> 8 - shift) & 255
+
+      moves = []
+      (0..7).each do |sh|
+        moves << DIRECTIONS[sh] if 1 << sh & rotated_directions > 0
+      end
+      moves
     end
 
 

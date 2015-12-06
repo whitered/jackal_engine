@@ -54,11 +54,12 @@ module JackalGame
     end
 
 
-    def locations_close a, b
-      return false if a==b
-      ax, ay = a.divmod @size
-      bx, by = b.divmod @size
-      (ax - bx).abs <= 1 && (ay - by).abs <= 1
+    def allowed_step from, to
+      a = at from
+      b = at to
+      ay, ax = from.divmod @size
+      by, bx = to.divmod @size
+      a.allowed_moves.include? [bx - ax, by - ay]
     end
 
 

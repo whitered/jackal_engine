@@ -72,7 +72,7 @@ module JackalGame
       unit = @units[action.unit]
       return 'wrong player' unless unit.player_id == current_move_player_id
       return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
-      return 'wrong step' unless @map.locations_close(unit.location, action.location)
+      return 'wrong step' unless @map.allowed_step(unit.location, action.location)
 
       location = action.location
       tile = @map.at(location)
