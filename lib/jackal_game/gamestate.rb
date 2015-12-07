@@ -35,7 +35,8 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units, :loot, :current_move_player_id, :current_move_unit_id, :current_move_unit_prev_location
+    attr_reader :map, :players, :units, :loot, :current_move_player_id,
+      :current_move_unit_id, :current_move_unit_available_steps
 
 
     def initialize data={}
@@ -45,7 +46,7 @@ module JackalGame
       @loot = data['loot'] || [] 
       @current_move_player_id = data['current_move_player_id']
       @current_move_unit_id = data['current_move_unit_id']
-      @current_move_unit_prev_location = data['current_move_unit_prev_location']
+      @current_move_unit_available_steps = data['current_move_unit_available_steps']
     end
 
 
@@ -58,7 +59,7 @@ module JackalGame
         :loot => @loot.as_json,
         :current_move_player_id => @current_move_player_id,
         :current_move_unit_id => @current_move_unit_id,
-        :current_move_unit_prev_location => @current_move_unit_prev_location
+        :current_move_unit_available_steps => @current_move_unit_available_steps
       }
     end
 
@@ -76,9 +77,7 @@ module JackalGame
       return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
 
       location = action.location
-      move_vector = @map.vector unit.location, location
-      available_moves = @map.at(unit.location).available_moves(@current_move_unit_prev_location)
-      return 'wrong step' unless available_moves.include? move_vector
+      return 'wrong step' if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
 
       tile = @map.at(location)
       carried_loot = @loot[action.carried_loot] unless action.carried_loot.nil?
@@ -110,15 +109,16 @@ module JackalGame
 
       if tile.transit?
         @current_move_unit_id = unit.id
-        @current_move_unit_prev_location = unit.location
         action.current_move_unit_id = unit.id
 
         x, y = @map.get_tile_position location
-        available_moves = tile.available_moves(@map.vector(@current_move_unit_prev_location, location))
-        action.available_steps = available_moves.map { |m| @map.get_tile_id(x + m.first, y + m.last)}
+        available_moves = tile.available_moves(@map.vector(unit.location, location))
+        @current_move_unit_available_steps = available_moves.map { |m| @map.get_tile_id(x + m.first, y + m.last)}
+        action.current_move_unit_available_steps = @current_move_unit_available_steps
       else
         @current_move_unit_id = nil
-        @current_move_unit_prev_location = nil
+        @current_move_unit_available_steps = nil
+
         next_player_id = (action.current_move_player_id + 1) % players.size
         action.current_move_player_id = next_player_id
         @current_move_player_id = next_player_id

@@ -62,7 +62,7 @@ module JackalGame
 
 
     def open_tile location
-      @tiles[location] = rand(45 * 4) + 1
+      @tiles[location] = rand(45 * 4) + 4
     end
 
 
