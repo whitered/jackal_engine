@@ -113,7 +113,8 @@ module JackalGame
 
         x, y = @map.get_tile_position location
         available_moves = tile.available_moves(@map.vector(unit.location, location))
-        @current_move_unit_available_steps = available_moves.map { |m| @map.get_tile_id(x + m.first, y + m.last)}
+        @current_move_unit_available_steps = available_moves.map { |m| @map.get_tile_id(x + m.first, y + m.last) }.compact
+        @current_move_unit_available_steps.delete_if { |s| !@map.at(s).accessible?(unit, carried_loot) }
         action.current_move_unit_available_steps = @current_move_unit_available_steps
       else
         @current_move_unit_id = nil
