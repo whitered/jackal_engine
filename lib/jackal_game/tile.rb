@@ -38,6 +38,8 @@ module JackalGame
     T_COIN_5 = 44
     T_CHEST = 45
     T_OCEAN = 46
+
+    T_SLIDE_HORSE = 12
     T_SLIDE_1 = 16
     T_SLIDE_2 = 17
     T_SLIDE_1T = 18
@@ -48,7 +50,7 @@ module JackalGame
     T_SLIDE_FWD = 23
     
 
-    TRANSIT = [T_SLIDE_1, T_SLIDE_2, T_SLIDE_1T, T_SLIDE_2T, T_SLIDE_4, T_SLIDE_4T, T_SLIDE_3, T_SLIDE_FWD]
+    TRANSIT = [T_SLIDE_HORSE, T_SLIDE_1, T_SLIDE_2, T_SLIDE_1T, T_SLIDE_2T, T_SLIDE_4, T_SLIDE_4T, T_SLIDE_3, T_SLIDE_FWD]
 
 
     attr_reader :value
@@ -87,6 +89,12 @@ module JackalGame
 
     def available_moves prev_move
       return [prev_move] if type == T_SLIDE_FWD
+
+      if type == T_SLIDE_HORSE
+        c = [-1, 1].product [-2, 2]
+        return c + c.map(&:reverse)
+      end
+
 
       unrotated_directions = case type
       when T_SLIDE_1 then TOP

@@ -40,7 +40,7 @@ module JackalGame
 
 
     def get_tile_id x, y
-      y * @size + x
+      y * @size + x unless x < 0 or y < 0 or x >= @size or y >= @size
     end
 
 
