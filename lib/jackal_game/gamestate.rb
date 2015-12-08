@@ -133,6 +133,8 @@ module JackalGame
       end
       action.captured_units = captured_units.map(&:id)
 
+      prev_location = unit.location
+
       if tile.accessible?(unit, carried_loot)
         if unit.ship?
           sailors = @units.select{ |u| u.location == unit.location && u != unit }
@@ -150,11 +152,11 @@ module JackalGame
         @current_move_unit_id = unit.id
         action.current_move_unit_id = unit.id
 
-        x, y = @map.get_tile_position location
-        available_moves = tile.available_moves(@map.vector(unit.location, location))
-        @current_move_unit_available_steps = available_moves.map { |m| @map.get_tile_id(x + m.first, y + m.last) }.compact
-        @current_move_unit_available_steps.delete_if { |s| !@map.at(s).accessible?(unit, carried_loot) }
-        action.current_move_unit_available_steps = @current_move_unit_available_steps
+
+        steps = @map.find_next_steps unit, prev_location, location, carried_loot
+
+        action.current_move_unit_available_steps = steps
+        @current_move_unit_available_steps = steps
       else
         @current_move_unit_id = nil
         @current_move_unit_available_steps = nil
