@@ -70,18 +70,18 @@ module JackalGame
 
 
     def move action
-      return 'wrong turn' unless current_move_player_id == action.current_move_player_id
+      return ['wrong turn'] unless current_move_player_id == action.current_move_player_id
 
       unit = @units[action.unit]
-      return 'wrong player' unless unit.player_id == current_move_player_id
-      return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
+      return ['wrong player'] unless unit.player_id == current_move_player_id
+      return ['wrong unit'] if @current_move_unit_id.present? and @current_move_unit_id != unit.id
 
       location = action.location
-      return 'wrong step' if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
+      return ['wrong step'] if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
 
       tile = @map.at(location)
       carried_loot = @loot[action.carried_loot] unless action.carried_loot.nil?
-      return 'inaccessible tile' unless tile.accessible?(unit, carried_loot)
+      return ['inaccessible tile'] unless tile.accessible?(unit, carried_loot)
 
       unless tile.explored?
         @map.open_tile(location)
@@ -130,7 +130,23 @@ module JackalGame
       action.unit_location = unit.location
       carried_loot.location = location unless carried_loot.nil?
 
-      action
+      if !@current_move_unit_id.nil? and @current_move_unit_available_steps.size < 2
+        if @current_move_unit_available_steps.size == 1
+          params = {
+            'action' => 'move',
+            'unit' => unit.id,
+            'location' => @current_move_unit_available_steps.first,
+            'carried_loot' => action.carried_loot,
+            'current_move_player_id' => action.current_move_player_id
+          }
+          next_move = move JackalGame::Move.new(params)
+          [action, next_move].flatten
+        else
+          [action, "impossible move"]
+        end
+      else
+        [action]
+      end
     end
 
   end

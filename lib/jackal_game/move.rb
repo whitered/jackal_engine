@@ -12,7 +12,7 @@ module JackalGame
       @action = params['action']
       @unit = params['unit'].to_i
       @location = params['location'].to_i
-      @carried_loot = params['carried_loot'].to_i unless params['carried_loot'].empty?
+      @carried_loot = params['carried_loot'].to_i unless params['carried_loot'].nil?
     end
   end
 end
