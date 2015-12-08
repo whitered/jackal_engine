@@ -30,6 +30,17 @@ module JackalGame
     end
 
 
+    def get_outermost_location location, direction
+      x, y = get_tile_position location
+      case direction
+      when 0 then get_tile_id(x, 0)
+      when 1 then get_tile_id(@size - 1, y)
+      when 2 then get_tile_id(x, @size - 1)
+      when 3 then get_tile_id(0, y)
+      end
+    end
+
+
     def as_json options={}
       {
         :json_class => self.class.name,
@@ -76,25 +87,6 @@ module JackalGame
     end
 
 
-    def find_next_steps unit, prev_location, location, carried_loot
-      tile = at(location)
-      x, y = get_tile_position location
-      if tile.type == JackalGame::Tile::T_SLIDE_GUN
-        case tile.rotation
-        when 0 then [get_tile_id(x, 0)]
-        when 1 then [get_tile_id(@size - 1, y)]
-        when 2 then [get_tile_id(x, @size - 1)]
-        when 3 then [get_tile_id(0, y)]
-        end
-      else
-        available_moves = tile.available_moves(vector(prev_location, location))
-        steps = available_moves.map { |m| get_tile_id(x + m.first, y + m.last) }.compact
-        steps.delete_if { |s| !at(s).accessible?(unit, carried_loot) }
-
-        steps
-      end
-
-    end
 
 
   end

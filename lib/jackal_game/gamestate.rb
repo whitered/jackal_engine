@@ -71,8 +71,14 @@ module JackalGame
 
     def move action
       steps = []
+      unit = @units[action.unit]
+      path_finder = PathFinder.new self, unit
+
       loop do
-        steps << make_step(action)
+        steps << make_step(action, path_finder)
+        @current_move_unit_id = action.current_move_unit_id
+        @current_move_unit_available_steps = action.current_move_unit_available_steps
+        @current_move_player_id = action.current_move_player_id
 
         break if @current_move_unit_id.nil? or @current_move_unit_available_steps.size > 1
         break if steps.last.is_a? String
@@ -100,7 +106,7 @@ module JackalGame
     end
 
 
-    def make_step action
+    def make_step action, path_finder
       return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
       unit = @units[action.unit]
@@ -148,22 +154,18 @@ module JackalGame
       end
 
       tile = @map.at unit.location
+
       if tile.transit?
-        @current_move_unit_id = unit.id
+        steps = path_finder.find_next_steps prev_location, location, carried_loot
+
         action.current_move_unit_id = unit.id
-
-
-        steps = @map.find_next_steps unit, prev_location, location, carried_loot
-
         action.current_move_unit_available_steps = steps
-        @current_move_unit_available_steps = steps
       else
-        @current_move_unit_id = nil
-        @current_move_unit_available_steps = nil
-
         next_player_id = (action.current_move_player_id + 1) % players.size
+
+        action.current_move_unit_id = nil
+        action.current_move_unit_available_steps = nil
         action.current_move_player_id = next_player_id
-        @current_move_player_id = next_player_id
       end
 
       action

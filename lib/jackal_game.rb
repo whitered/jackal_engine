@@ -11,4 +11,5 @@ require 'jackal_game/move'
 require 'jackal_game/tile'
 require 'jackal_game/map'
 require 'jackal_game/loot'
+require 'jackal_game/path_finder'
 
