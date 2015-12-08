@@ -1,6 +1,6 @@
 module JackalGame
 
-  class Move
+  class Action
 
 
     attr_reader :action, :unit, :location, :carried_loot

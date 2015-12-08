@@ -84,7 +84,7 @@ module JackalGame
         break if steps.last.is_a? String
 
         if steps.size > 100 or @current_move_unit_available_steps.empty?
-          action = JackalGame::Move.new({
+          action = JackalGame::Action.new({
             'action' => 'death',
             'unit' => action.unit,
             'location' => unit.location,
@@ -93,7 +93,7 @@ module JackalGame
           })
 
         elsif @current_move_unit_available_steps.size == 1
-          action = JackalGame::Move.new({
+          action = JackalGame::Action.new({
             'action' => 'move',
             'unit' => action.unit,
             'location' => @current_move_unit_available_steps.first,
