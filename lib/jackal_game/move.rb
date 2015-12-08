@@ -3,7 +3,7 @@ module JackalGame
   class Move
 
 
-    attr_reader :unit, :location, :carried_loot
+    attr_reader :action, :unit, :location, :carried_loot
     attr_accessor :tile, :current_move_player_id, :unit_location, :captured_units, :sailors, :found_loot, :current_move_unit_id, :current_move_unit_available_steps
 
 

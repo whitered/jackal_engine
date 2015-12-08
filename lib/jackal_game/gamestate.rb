@@ -82,16 +82,17 @@ module JackalGame
 
         break if @current_move_unit_id.nil? or @current_move_unit_available_steps.size > 1
         break if steps.last.is_a? String
-        break if steps.size > 100
 
-        @current_move_unit_available_steps.delete action.location if action.unit_location != action.location
+        if steps.size > 100 or @current_move_unit_available_steps.empty?
+          action = JackalGame::Move.new({
+            'action' => 'death',
+            'unit' => action.unit,
+            'location' => unit.location,
+            'carried_loot' => action.carried_loot,
+            'current_move_player_id' => action.current_move_player_id
+          })
 
-        if @current_move_unit_available_steps.empty?
-          steps << "no way"
-          break
-        end
-
-        if @current_move_unit_available_steps.size == 1
+        elsif @current_move_unit_available_steps.size == 1
           action = JackalGame::Move.new({
             'action' => 'move',
             'unit' => action.unit,
@@ -113,6 +114,16 @@ module JackalGame
       return 'wrong player' unless unit.player_id == current_move_player_id
       return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
 
+
+      next_player_id = (action.current_move_player_id + 1) % players.size
+
+      if action.action == 'death'
+        @units[unit.id] = nil
+        @loot[action.carried_loot] = nil unless action.carried_loot.nil? 
+        action.current_move_player_id = next_player_id
+        return action
+      end
+
       location = action.location
       return 'wrong step' if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
 
@@ -132,7 +143,7 @@ module JackalGame
         end
       end
 
-      captured_units = @units.select{ |unit| unit.location == location && unit.player_id != current_move_player_id }
+      captured_units = @units.select{ |unit| !unit.nil? and unit.location == location and unit.player_id != current_move_player_id }
       captured_units.each do |unit|
         captured_ship = @units.select { |u| u.player_id == unit.player_id && u.type == 'ship' }.first
         unit.location = captured_ship.location
@@ -141,33 +152,30 @@ module JackalGame
 
       prev_location = unit.location
 
-      if tile.accessible?(unit, carried_loot)
-        if unit.ship?
-          sailors = @units.select{ |u| u.location == unit.location && u != unit }
-          sailors.each { |u| u.location = location }
-          action.sailors = sailors.map(&:id)
-        end
-
-        unit.location = location
-        action.unit_location = location
-        carried_loot.location = location unless carried_loot.nil?
+      if unit.ship?
+        sailors = @units.select{ |u| u.location == unit.location && u != unit }
+        sailors.each { |u| u.location = location }
+        action.sailors = sailors.map(&:id)
       end
 
-      tile = @map.at unit.location
+      unit.location = location
+      action.unit_location = location
+      carried_loot.location = location unless carried_loot.nil?
 
       if tile.transit?
         steps = path_finder.find_next_steps prev_location, location, carried_loot
 
         action.current_move_unit_id = unit.id
         action.current_move_unit_available_steps = steps
-      else
-        next_player_id = (action.current_move_player_id + 1) % players.size
-
+      elsif tile.accessible?(unit, carried_loot)
         action.current_move_unit_id = nil
         action.current_move_unit_available_steps = nil
         action.current_move_player_id = next_player_id
+      else
+        path_finder.ban prev_location, location
+        action.current_move_unit_id = unit.id
+        action.current_move_unit_available_steps = [prev_location]
       end
-
       action
     end
 
