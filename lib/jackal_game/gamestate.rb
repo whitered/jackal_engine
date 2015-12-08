@@ -70,22 +70,54 @@ module JackalGame
 
 
     def move action
-      return ['wrong turn'] unless current_move_player_id == action.current_move_player_id
+      steps = []
+      loop do
+        steps << make_step(action)
+
+        break if @current_move_unit_id.nil? or @current_move_unit_available_steps.size > 1
+        break if steps.last.is_a? String
+        break if steps.size > 100
+
+        @current_move_unit_available_steps.delete action.location if action.unit_location != action.location
+
+        if @current_move_unit_available_steps.empty?
+          steps << "no way"
+          break
+        end
+
+        if @current_move_unit_available_steps.size == 1
+          action = JackalGame::Move.new({
+            'action' => 'move',
+            'unit' => action.unit,
+            'location' => @current_move_unit_available_steps.first,
+            'carried_loot' => action.carried_loot,
+            'current_move_player_id' => action.current_move_player_id
+          })
+        end
+      end
+
+      steps
+    end
+
+
+    def make_step action
+      return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
       unit = @units[action.unit]
-      return ['wrong player'] unless unit.player_id == current_move_player_id
-      return ['wrong unit'] if @current_move_unit_id.present? and @current_move_unit_id != unit.id
+      return 'wrong player' unless unit.player_id == current_move_player_id
+      return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
 
       location = action.location
-      return ['wrong step'] if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
+      return 'wrong step' if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
 
       tile = @map.at(location)
-      carried_loot = @loot[action.carried_loot] unless action.carried_loot.nil?
-      return ['inaccessible tile'] unless tile.accessible?(unit, carried_loot)
+      carried_loot = @loot[action.carried_loot] if action.carried_loot
+      return 'inaccessible tile' unless tile.accessible?(unit, carried_loot)
 
       unless tile.explored?
         @map.open_tile(location)
         tile = @map.at(location)
+        action.tile = tile.value
         found_loot = tile.get_loot
         if found_loot
           lid = @loot.size
@@ -101,12 +133,19 @@ module JackalGame
       end
       action.captured_units = captured_units.map(&:id)
 
-      if unit.ship?
-        sailors = @units.select{ |u| u.location == unit.location && u != unit }
-        sailors.each { |u| u.location = location }
-        action.sailors = sailors.map(&:id)
+      if tile.accessible?(unit, carried_loot)
+        if unit.ship?
+          sailors = @units.select{ |u| u.location == unit.location && u != unit }
+          sailors.each { |u| u.location = location }
+          action.sailors = sailors.map(&:id)
+        end
+
+        unit.location = location
+        action.unit_location = location
+        carried_loot.location = location unless carried_loot.nil?
       end
 
+      tile = @map.at unit.location
       if tile.transit?
         @current_move_unit_id = unit.id
         action.current_move_unit_id = unit.id
@@ -125,30 +164,8 @@ module JackalGame
         @current_move_player_id = next_player_id
       end
 
-      action.tile = @map.at(location).value
-      unit.location = location
-      action.unit_location = unit.location
-      carried_loot.location = location unless carried_loot.nil?
-
-      if !@current_move_unit_id.nil? and @current_move_unit_available_steps.size < 2
-        if @current_move_unit_available_steps.size == 1
-          params = {
-            'action' => 'move',
-            'unit' => unit.id,
-            'location' => @current_move_unit_available_steps.first,
-            'carried_loot' => action.carried_loot,
-            'current_move_player_id' => action.current_move_player_id
-          }
-          next_move = move JackalGame::Move.new(params)
-          [action, next_move].flatten
-        else
-          [action, "impossible move"]
-        end
-      else
-        [action]
-      end
+      action
     end
 
   end
-
 end
