@@ -13,7 +13,7 @@ module JackalGame
       tile = @map.at(location)
       steps = case tile.type
       when JackalGame::Tile::T_SLIDE_PARACHUTE
-        ship = @gamestate.units.find { |u| u.ship? and u.player_id == @unit.player_id }
+        ship = @gamestate.units.find { |u| u and u.ship? and u.player_id == @unit.player_id }
         [ship.location]
       when JackalGame::Tile::T_SLIDE_GUN
         [@map.get_outermost_location(location, tile.rotation)]

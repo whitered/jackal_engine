@@ -71,7 +71,7 @@ module JackalGame
 
     def move action
       steps = []
-      unit = @units[action.unit]
+      unit = @units.find { |u| u.id == action.unit}
       path_finder = PathFinder.new self, unit
 
       loop do
@@ -110,7 +110,7 @@ module JackalGame
     def make_step action, path_finder
       return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
-      unit = @units[action.unit]
+      unit = @units.find { |u| u.id == action.unit }
       return 'wrong player' unless unit.player_id == current_move_player_id
       return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
 
@@ -118,8 +118,8 @@ module JackalGame
       next_player_id = (action.current_move_player_id + 1) % players.size
 
       if action.action == 'death'
-        @units[unit.id] = nil
-        @loot[action.carried_loot] = nil unless action.carried_loot.nil? 
+        @units.delete_if { |u| u.id == unit.id }
+        @loot.delete_if { |l| l.id == action.carried_loot } unless action.carried_loot.nil? 
         action.current_move_player_id = next_player_id
         return action
       end
@@ -128,7 +128,7 @@ module JackalGame
       return 'wrong step' if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
 
       tile = @map.at(location)
-      carried_loot = @loot[action.carried_loot] if action.carried_loot
+      carried_loot = @loot.find { |l| l.id == action.carried_loot } if action.carried_loot
       return 'inaccessible tile' unless tile.accessible?(unit, carried_loot)
 
       unless tile.explored?
@@ -145,7 +145,7 @@ module JackalGame
 
       captured_units = @units.select{ |unit| !unit.nil? and unit.location == location and unit.player_id != current_move_player_id }
       captured_units.each do |unit|
-        captured_ship = @units.select { |u| u.player_id == unit.player_id && u.type == 'ship' }.first
+        captured_ship = @units.find { |u| u.player_id == unit.player_id && u.type == 'ship' }
         unit.location = captured_ship.location
       end
       action.captured_units = captured_units.map(&:id)
