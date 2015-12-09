@@ -1,31 +1,6 @@
 module JackalGame
 
-  class Tile
-
-    NONE = 0
-    TOP = 1
-    TR = 2
-    RIGHT = 4
-    BR = 8
-    BOTTOM = 16
-    BL = 32
-    LEFT = 64
-    TL = 128
-
-    DIRECTIONS = [
-      [0, -1],
-      [1, -1],
-      [1, 0],
-      [1, 1],
-      [0, 1],
-      [-1, 1],
-      [-1, 0],
-      [-1, -1]
-    ]
-
-
-
-
+  module TileConstants
     T_UNEXPLORED = 0
 
     T_FORT = 3
@@ -62,6 +37,36 @@ module JackalGame
 
     TRANSIT = [T_SLIDE_HORSE, T_SLIDE_PARACHUTE, T_SLIDE_GUN, T_SLIDE_1, T_SLIDE_2, T_SLIDE_1T, T_SLIDE_2T, T_SLIDE_4, T_SLIDE_4T, T_SLIDE_3, T_SLIDE_FWD]
     SHELTERS = [T_FORT, T_FORT_ABORIGEN]
+  end
+
+  class Tile
+
+    include TileConstants
+
+    NONE = 0
+    TOP = 1
+    TR = 2
+    RIGHT = 4
+    BR = 8
+    BOTTOM = 16
+    BL = 32
+    LEFT = 64
+    TL = 128
+
+    DIRECTIONS = [
+      [0, -1],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+      [-1, 1],
+      [-1, 0],
+      [-1, -1]
+    ]
+
+
+
+
 
 
     attr_reader :value

@@ -2,19 +2,19 @@ module JackalGame
 
   class Map
 
-    TILE_OCEAN = JackalGame::Tile::T_OCEAN * 4
+    include TileConstants
 
 
     def self.generate options={}
       size = options['size'] || 13
       tiles = []
-      tiles.concat [TILE_OCEAN] * size
+      tiles.concat [T_OCEAN] * size
       (size - 2).times do
-        tiles << TILE_OCEAN
+        tiles << T_OCEAN
         tiles.concat [0] * (size - 2)
-        tiles << TILE_OCEAN
+        tiles << T_OCEAN
       end
-      tiles.concat [TILE_OCEAN] * size
+      tiles.concat [T_OCEAN] * size
       Map.new 'size' => size, 'tiles' => tiles
     end
 
@@ -27,6 +27,7 @@ module JackalGame
     def initialize data={}
       @size = data['size'] || 13
       @tiles = data['tiles'] || ([0] * (@size * @size))
+      @source = data['source']
     end
 
 
@@ -73,7 +74,7 @@ module JackalGame
 
 
     def open_tile location
-      @tiles[location] = rand(45 * 4) + 4
+      @tiles[location] = @source[location]
     end
 
 
