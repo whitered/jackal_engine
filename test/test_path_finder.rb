@@ -1,5 +1,6 @@
 require 'jackal_game'
 require 'minitest/autorun'
+require 'minitest/pride'
 
 class TestPathFinder < Minitest::Test
 

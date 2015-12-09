@@ -143,10 +143,10 @@ module JackalGame
         end
       end
 
-      captured_units = @units.select{ |unit| !unit.nil? and unit.location == location and unit.player_id != current_move_player_id }
-      captured_units.each do |unit|
-        captured_ship = @units.find { |u| u.player_id == unit.player_id && u.type == 'ship' }
-        unit.location = captured_ship.location
+      captured_units = @units.select{ |u| !u.nil? and u.location == location and u.player_id != current_move_player_id }
+      captured_units.each do |cu|
+        captured_ship = @units.find { |u| u.player_id == cu.player_id && u.type == 'ship' }
+        cu.location = captured_ship.location
       end
       action.captured_units = captured_units.map(&:id)
 
