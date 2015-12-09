@@ -1,4 +1,6 @@
-class TestMap < Minitest::Test
+require 'test_helper'
+
+class MapTest < Minitest::Test
   
   include JackalGame
   include TileConstants

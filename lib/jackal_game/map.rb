@@ -5,20 +5,6 @@ module JackalGame
     include TileConstants
 
 
-    def self.generate options={}
-      size = options['size'] || 13
-      tiles = []
-      tiles.concat [T_OCEAN] * size
-      (size - 2).times do
-        tiles << T_OCEAN
-        tiles.concat [0] * (size - 2)
-        tiles << T_OCEAN
-      end
-      tiles.concat [T_OCEAN] * size
-      Map.new 'size' => size, 'tiles' => tiles
-    end
-
-
     def self.json_create data
       new data
     end
