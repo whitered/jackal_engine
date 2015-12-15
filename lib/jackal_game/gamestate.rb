@@ -6,7 +6,7 @@ module JackalGame
       num_of_players = options[:num_of_players] || 4
       map_size = options[:size] || 13
 
-      tiles = MapGenerator.generate(size: map_size)
+      tiles = MapGenerator.generate(size: map_size, unexplored: true)
       map = Map.new({ 'tiles' => tiles, 'size' => map_size })
 
       players = 0.upto(num_of_players - 1).map { |id| Player.new('id' => id) }
@@ -38,6 +38,8 @@ module JackalGame
 
     attr_reader :map, :players, :units, :loot, :current_move_player_id,
       :current_move_unit_id, :current_move_unit_available_steps
+
+    attr_accessor :source_map
 
 
     def initialize data={}
@@ -113,7 +115,7 @@ module JackalGame
 
       unit = @units.find { |u| u.id == action.unit }
       return 'wrong player' unless unit.player_id == current_move_player_id
-      return 'wrong unit' if @current_move_unit_id.present? and @current_move_unit_id != unit.id
+      return 'wrong unit' if !@current_move_unit_id.nil? and @current_move_unit_id != unit.id
 
 
       next_player_id = (action.current_move_player_id + 1) % players.size
@@ -126,14 +128,14 @@ module JackalGame
       end
 
       location = action.location
-      return 'wrong step' if @current_move_unit_available_steps.present? and !@current_move_unit_available_steps.include? location
+      return 'wrong step' unless @current_move_unit_available_steps.nil? or @current_move_unit_available_steps.include? location
 
       tile = @map.at(location)
       carried_loot = @loot.find { |l| l.id == action.carried_loot } if action.carried_loot
       return 'inaccessible tile' unless tile.accessible?(unit, carried_loot)
 
       unless tile.explored?
-        @map.open_tile(location)
+        @map.set_tile(location, @source_map[location])
         tile = @map.at(location)
         action.tile = tile.value
         found_loot = tile.get_loot

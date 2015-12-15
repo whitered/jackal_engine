@@ -41,4 +41,11 @@ class MapGeneratorTest < Minitest::Test
   def test_no_unexplored_tiles
     assert_nil @map.find { |t| Tile.new(t).type == T_UNEXPLORED }, 'map should not have unexplored tiles'
   end
+
+
+  def test_unexplored_generation
+    map = MapGenerator.generate(size: 7, unexplored: true)
+    assert_equal 24, map.count { |t| Tile.new(t).type == T_OCEAN }
+    assert_equal 25, map.count(T_UNEXPLORED)
+  end
 end

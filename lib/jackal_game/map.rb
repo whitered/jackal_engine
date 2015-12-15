@@ -16,7 +16,6 @@ module JackalGame
     def initialize data={}
       @size = data['size'] || 13
       @tiles = data['tiles'] || ([0] * (@size * @size))
-      @source = data['source']
     end
 
 
@@ -62,8 +61,8 @@ module JackalGame
     end
 
 
-    def open_tile location
-      @tiles[location] = @source[location]
+    def set_tile location, source
+      @tiles[location] = source
     end
 
 

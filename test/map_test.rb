@@ -6,26 +6,21 @@ class MapTest < Minitest::Test
   include TileConstants
 
   def setup
-    
     size = 7
-    @source = [
-      T_OCEAN, T_OCEAN + 2, T_OCEAN + 2, T_OCEAN + 2, T_OCEAN + 2, T_OCEAN + 2, T_OCEAN + 2
-    ]
-
     tiles = [T_UNEXPLORED] * size * size
 
-
-    @map = Map.new({'size' => 7, 'tiles' => tiles, 'source' => @source})
+    @map = Map.new({'size' => size, 'tiles' => tiles})
   end
 
 
 
   def test_map_take_tiles_from_source
-    x = 5
-    assert_equal T_UNEXPLORED, @map.at(x).type
-    refute_equal T_UNEXPLORED, @source[x]
-    @map.open_tile x
-    assert_equal @source[x], @map.at(x).value
+    loc = 5
+    src = 32
+    assert_equal T_UNEXPLORED, @map.at(loc).type
+    refute_equal T_UNEXPLORED, src
+    @map.set_tile loc, src
+    assert_equal src, @map.at(loc).value
   end
 
 end
