@@ -10,6 +10,9 @@ module JackalGame
     end
 
 
+    attr_reader :size
+
+
     def initialize data={}
       @size = data['size'] || 13
       @tiles = data['tiles'] || ([0] * (@size * @size))

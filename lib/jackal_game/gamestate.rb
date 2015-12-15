@@ -4,9 +4,10 @@ module JackalGame
 
     def self.initial options={}
       num_of_players = options[:num_of_players] || 4
-      map_size = 13
+      map_size = options[:size] || 13
 
-      map = Map.generate('size' => map_size)
+      tiles = MapGenerator.generate(size: map_size)
+      map = Map.new({ 'tiles' => tiles, 'size' => map_size })
 
       players = 0.upto(num_of_players - 1).map { |id| Player.new('id' => id) }
 
