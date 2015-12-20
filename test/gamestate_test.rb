@@ -5,7 +5,12 @@ class GamestateTest < Minitest::Test
   include JackalGame
 
   def setup
+  end
 
+
+  def test_unit
+    gs = GameState.initial(size: 7)
+    assert_equal 2, gs.get_unit(2).id
   end
 
 

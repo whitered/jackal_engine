@@ -67,6 +67,11 @@ module JackalGame
     end
 
 
+    def get_unit uid
+      @units.find { |u| u.id == uid }
+    end
+
+
     def start
       @current_move_player_id = 0
     end
