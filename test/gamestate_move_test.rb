@@ -6,9 +6,7 @@ class GamestateMoveTest < Minitest::Test
   include JackalGame
 
   def setup
-    source = [184,187,186,185,185,184,184,184,184,184,184,184,184,184,32,176,32,32,128,176,48,73,32,176,128,184,185,32,66,68,32,68,88,32,32,92,32,32,184,185,32,128,128,33,128,75,48,72,128,128,33,184,184,32,32,32,33,32,32,32,32,32,32,32,184,184,32,33,33,33,32,32,33,33,33,32,32,184,186,32,32,33,32,32,32,32,32,33,32,32,184,186,32,33,32,32,33,33,33,33,32,32,33,184,185,32,33,32,33,33,32,32,33,32,32,32,184,185,32,32,32,33,32,34,35,33,32,32,32,184,185,33,32,33,34,33,34,32,33,33,33,32,184,184,33,33,32,32,32,32,32,32,32,32,33,184,186,186,185,184,185,186,184,184,184,184,184,184,184]
-    @gamestate = GameGenerator.gamestate(num_of_players: 2, size: 13)
-    @gamestate.source_map = source
+    @gamestate = load_gamestate
     @gamestate.start
     @unit = @gamestate.units[1]
   end
@@ -19,17 +17,12 @@ class GamestateMoveTest < Minitest::Test
   end
 
 
-  def start_from x, y
-    @unit.location = loc x, y
-  end
-
-
-  def move x, y, loot=nil
+  def move loc, loot=nil
     params = {
       'current_move_player_id' => @gamestate.players.first.id,
       'action' => 'move',
       'unit' => @unit.id,
-      'location' => loc(x, y),
+      'location' => loc,
       'carried_loot' => loot
     }
     action = Action.new params
@@ -39,11 +32,19 @@ class GamestateMoveTest < Minitest::Test
 
 
   def test_simple_move
-    start_from 1, 1
-    res = move 1, 2
+    res = move 32
     
-    assert_equal loc(1, 2), @unit.location
-    assert_equal loc(1, 2), res.first.location
+    assert_equal 32, @unit.location
+    assert_equal 32, res.first.location
+  end
+
+
+  def test_move_fails_for_nonavailable_step
+    initial_loc = @unit.location
+    res = move 59
+    assert_equal initial_loc, @unit.location
+    assert_equal "wrong step", res.first
+    assert_equal 1, res.size
   end
 
 

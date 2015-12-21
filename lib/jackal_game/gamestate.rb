@@ -107,11 +107,13 @@ module JackalGame
       end
 
       location = action.location
-      return 'wrong step' unless @current_move_unit_available_steps.nil? or @current_move_unit_available_steps.include? location
+      unit_steps = @available_steps[unit.id]
+      return 'wrong unit' if unit_steps.nil?
+
+      carried_loot = @loot.find { |l| l.id == action.carried_loot } if action.carried_loot
+      return 'wrong step' unless unit_steps[!!carried_loot].include? location
 
       tile = @map.at(location)
-      carried_loot = @loot.find { |l| l.id == action.carried_loot } if action.carried_loot
-      return 'inaccessible tile' unless path_finder.tile_accessible?(tile.type, unit.ship?, carried_loot)
 
       unless tile.explored?
         @map.set_tile(location, @source_map[location])
