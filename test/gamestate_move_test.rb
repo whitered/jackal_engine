@@ -70,4 +70,12 @@ class GamestateMoveTest < Minitest::Test
   end
 
 
+  def test_move_wrong_unit
+    @unit = @gamestate.units[5]
+    res = move 32
+    assert_equal "wrong unit", res.first
+    assert_equal 1, res.size
+  end
+
+
 end

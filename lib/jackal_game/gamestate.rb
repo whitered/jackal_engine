@@ -76,10 +76,6 @@ module JackalGame
       return 'wrong turn' unless current_move_player_id == action.current_move_player_id
 
       unit = @units.find { |u| u.id == action.unit }
-      return 'wrong player' unless unit.player_id == current_move_player_id
-      return 'wrong unit' if !@current_move_unit_id.nil? and @current_move_unit_id != unit.id
-
-
       next_player_id = (action.current_move_player_id + 1) % players.size
 
       if action.action == 'death'
