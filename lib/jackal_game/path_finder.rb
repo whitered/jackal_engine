@@ -4,6 +4,7 @@ module JackalGame
 
     include TileConstants
 
+
     NONE = 0
     TOP = 1
     TR = 2
@@ -13,6 +14,7 @@ module JackalGame
     BL = 32
     LEFT = 64
     TL = 128
+
 
     DIRECTIONS = [
       [0, -1],
@@ -28,14 +30,13 @@ module JackalGame
 
 
 
-
-
     def initialize gamestate
       @gamestate = gamestate
       @map = gamestate.map
       @banned = {}
     end
     
+
 
     def find_next_steps unit, prev_location, location, carried_loot
       tile = @map.at(location)
@@ -60,9 +61,11 @@ module JackalGame
     end
 
 
+
     def ban from, to
       (@banned[from] ||= []) << to
     end
+
 
 
     def tile_accessible? tile_type, byShip, withLoot
@@ -78,6 +81,7 @@ module JackalGame
 
 
 
+
     def available_moves tile, prev_move
       type = tile.type
       return [prev_move] if type == T_SLIDE_FWD
@@ -86,7 +90,6 @@ module JackalGame
         c = [-1, 1].product [-2, 2]
         return c + c.map(&:reverse)
       end
-
 
       unrotated_directions = case type
       when T_SLIDE_1 then TOP

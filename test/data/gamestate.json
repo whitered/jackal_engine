@@ -1,5 +1,5 @@
 {
-  "json_class":"JackalGame::GameState",
+  "json_class":"JackalGame::Gamestate",
   "map":{
     "json_class":"JackalGame::Map",
     "size":13,

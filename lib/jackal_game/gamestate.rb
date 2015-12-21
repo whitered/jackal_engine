@@ -1,35 +1,6 @@
 module JackalGame
 
-  class GameState
-
-    def self.initial options={}
-      num_of_players = options[:num_of_players] || 4
-      map_size = options[:size] || 13
-
-      tiles = MapGenerator.generate(size: map_size, unexplored: true)
-      map = Map.new({ 'tiles' => tiles, 'size' => map_size })
-
-      players = 0.upto(num_of_players - 1).map { |id| Player.new('id' => id) }
-
-      units = []
-
-      players.each do |player|
-        location = map.spawn player.id
-        units << Unit.new('location' => location, 'player_id' => player.id, 'type' => 'ship')
-        3.times { units << Unit.new('location' => location, 'player_id' => player.id, 'type' => 'pirate') }
-      end
-
-      units.each_with_index { |u, i| u.id = i }
-
-      data = {
-        'map' => map,
-        'players' => players,
-        'units' => units
-      }
-
-      GameState.new data
-    end
-
+  class Gamestate
 
     def self.json_create data
       new data

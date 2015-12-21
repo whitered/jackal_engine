@@ -13,5 +13,5 @@ require 'jackal_game/tile'
 require 'jackal_game/map'
 require 'jackal_game/loot'
 require 'jackal_game/path_finder'
-require 'jackal_game/map_generator'
+require 'jackal_game/game_generator'
 
