@@ -73,7 +73,7 @@ module JackalGame
         tile_type == T_OCEAN
       else
         return false if [T_CROCODILE].include? tile_type
-        return false if withLoot and !explored?
+        return false if withLoot and tile_type == T_UNEXPLORED
         return false if withLoot and SHELTERS.include? tile_type
         true
       end
@@ -110,6 +110,20 @@ module JackalGame
         moves << DIRECTIONS[sh] if 1 << sh & rotated_directions > 0
       end
       moves
+    end
+
+
+    def get_available_steps player_id
+      steps = {}
+      units = @gamestate.units.each do |u|
+        if u.player_id == player_id
+          usteps = {}
+          usteps[false] = find_next_steps(u, nil, u.location, false)
+          usteps[true] = find_next_steps(u, nil, u.location, true) unless @gamestate.loot.find{ |l| l.location == u.location }.nil?
+          steps[u.id] = usteps
+        end
+      end
+      steps
     end
 
 
