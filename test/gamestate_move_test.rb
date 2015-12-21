@@ -48,4 +48,13 @@ class GamestateMoveTest < Minitest::Test
   end
 
 
+  def test_move_with_fake_loot
+    initial_loc = @unit.location
+    res = move 20, 6
+    assert_equal initial_loc, @unit.location
+    assert_equal "wrong step", res.first
+    assert_equal 1, res.size
+  end
+
+
 end
