@@ -80,7 +80,7 @@ module JackalGame
     def move action
       steps = []
       unit = @units.find { |u| u.id == action.unit}
-      path_finder = PathFinder.new self, unit
+      path_finder = PathFinder.new self
 
       loop do
         steps << make_step(action, path_finder)
@@ -137,7 +137,7 @@ module JackalGame
 
       tile = @map.at(location)
       carried_loot = @loot.find { |l| l.id == action.carried_loot } if action.carried_loot
-      return 'inaccessible tile' unless tile.accessible?(unit, carried_loot)
+      return 'inaccessible tile' unless path_finder.tile_accessible?(tile.type, unit.ship?, carried_loot)
 
       unless tile.explored?
         @map.set_tile(location, @source_map[location])
@@ -171,11 +171,11 @@ module JackalGame
       carried_loot.location = location unless carried_loot.nil?
 
       if tile.transit?
-        steps = path_finder.find_next_steps prev_location, location, carried_loot
+        steps = path_finder.find_next_steps unit, prev_location, location, carried_loot
 
         action.current_move_unit_id = unit.id
         action.current_move_unit_available_steps = steps
-      elsif tile.accessible?(unit, carried_loot)
+      elsif path_finder.tile_accessible?(tile.type, unit.ship?, carried_loot)
         action.current_move_unit_id = nil
         action.current_move_unit_available_steps = nil
         action.current_move_player_id = next_player_id
