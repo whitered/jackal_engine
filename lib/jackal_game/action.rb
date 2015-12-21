@@ -3,8 +3,18 @@ module JackalGame
   class Action
 
 
-    attr_reader :action, :unit, :location, :carried_loot
-    attr_accessor :tile, :current_move_player_id, :unit_location, :captured_units, :sailors, :found_loot, :current_move_unit_id, :current_move_unit_available_steps
+    attr_reader :action
+    attr_reader :unit
+    attr_reader :location
+    attr_reader :carried_loot
+
+    attr_accessor :tile
+    attr_accessor :current_move_player_id
+    attr_accessor :unit_location
+    attr_accessor :captured_units
+    attr_accessor :sailors
+    attr_accessor :found_loot
+    attr_accessor :available_steps
 
 
     def initialize params
@@ -13,6 +23,31 @@ module JackalGame
       @unit = params['unit'].to_i
       @location = params['location'].to_i
       @carried_loot = params['carried_loot'].to_i unless params['carried_loot'].nil? or params['carried_loot'] == ''
+    end
+
+
+    def predict_next_action
+      return nil if @available_steps.nil?
+      return nil if @available_steps.size > 1
+
+      params = { current_move_player_id: @current_move_player_id, unit: @unit }
+      params.carried_loot = @carried_loot unless @carried_loot.nil?
+      if @available_steps.empty?
+        params['action'] = 'death'
+        params['location'] = @location
+      else
+        unit = @available_steps.keys.first
+        steps = @available_steps.values.first
+        return nil if steps.size > 1
+        has_loot = steps.keys.first
+        steps = steps.values.first
+        return nil if steps.size > 1
+        params['unit'] = unit
+        params['action'] = 'move'
+        params['location'] = steps.first
+      end
+
+      Action.new params
     end
   end
 end

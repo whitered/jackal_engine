@@ -7,8 +7,12 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units, :loot, :current_move_player_id, :available_steps,
-      :current_move_unit_id, :current_move_unit_available_steps
+    attr_reader :map
+    attr_reader :players
+    attr_reader :units
+    attr_reader :loot
+    attr_reader :current_move_player_id
+    attr_reader :available_steps
 
     attr_accessor :source_map
 
@@ -20,8 +24,6 @@ module JackalGame
       @loot = data['loot'] || [] 
       @current_move_player_id = data['current_move_player_id']
       @available_steps = data['available_steps']
-      @current_move_unit_id = data['current_move_unit_id']
-      @current_move_unit_available_steps = data['current_move_unit_available_steps']
     end
 
 
@@ -34,8 +36,6 @@ module JackalGame
         :loot => @loot.as_json,
         :current_move_player_id => @current_move_player_id,
         :available_steps => @available_steps,
-        :current_move_unit_id => @current_move_unit_id,
-        :current_move_unit_available_steps => @current_move_unit_available_steps
       }
     end
 
@@ -57,32 +57,15 @@ module JackalGame
       path_finder = PathFinder.new self
 
       loop do
-        steps << make_step(action, path_finder)
-        @current_move_unit_id = action.current_move_unit_id
-        @current_move_unit_available_steps = action.current_move_unit_available_steps
+        step = make_step(action, path_finder)
+        steps << step
         @current_move_player_id = action.current_move_player_id
+        @available_steps = action.available_steps
 
-        break if @current_move_unit_id.nil? or @current_move_unit_available_steps.size > 1
-        break if steps.last.is_a? String
+        break if step.is_a? String
 
-        if steps.size > 100 or @current_move_unit_available_steps.empty?
-          action = JackalGame::Action.new({
-            'action' => 'death',
-            'unit' => action.unit,
-            'location' => unit.location,
-            'carried_loot' => action.carried_loot,
-            'current_move_player_id' => action.current_move_player_id
-          })
-
-        elsif @current_move_unit_available_steps.size == 1
-          action = JackalGame::Action.new({
-            'action' => 'move',
-            'unit' => action.unit,
-            'location' => @current_move_unit_available_steps.first,
-            'carried_loot' => action.carried_loot,
-            'current_move_player_id' => action.current_move_player_id
-          })
-        end
+        action = step.predict_next_action
+        break if action.nil?
       end
 
       steps
@@ -110,8 +93,8 @@ module JackalGame
       unit_steps = @available_steps[unit.id]
       return 'wrong unit' if unit_steps.nil?
 
-      actual_steps = unit_steps[!!action.carried_loot] || []
-      return 'wrong step' unless actual_steps.include? location
+      has_loot = !!action.carried_loot
+      return 'wrong step' unless (unit_steps[has_loot] || []).include? location
 
       tile = @map.at(location)
       carried_loot = @loot.find { |l| l.id == action.carried_loot } if action.carried_loot
@@ -149,17 +132,13 @@ module JackalGame
 
       if tile.transit?
         steps = path_finder.find_next_steps unit, prev_location, location, carried_loot
-
-        action.current_move_unit_id = unit.id
-        action.current_move_unit_available_steps = steps
+        action.available_steps = { unit.id => { has_loot => steps } }
       elsif path_finder.tile_accessible?(tile.type, unit.ship?, carried_loot)
-        action.current_move_unit_id = nil
-        action.current_move_unit_available_steps = nil
         action.current_move_player_id = next_player_id
+        action.available_steps = path_finder.get_available_steps(action.current_move_player_id)
       else
         path_finder.ban prev_location, location
-        action.current_move_unit_id = unit.id
-        action.current_move_unit_available_steps = [prev_location]
+        action.available_steps = { unit.id => { has_loot => [prev_location] } }
       end
       action
     end
