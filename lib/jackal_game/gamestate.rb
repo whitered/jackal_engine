@@ -7,7 +7,7 @@ module JackalGame
     end
 
 
-    attr_reader :map, :players, :units, :loot, :current_move_player_id,
+    attr_reader :map, :players, :units, :loot, :current_move_player_id, :available_steps,
       :current_move_unit_id, :current_move_unit_available_steps
 
     attr_accessor :source_map
@@ -19,6 +19,7 @@ module JackalGame
       @units = data['units'] || []
       @loot = data['loot'] || [] 
       @current_move_player_id = data['current_move_player_id']
+      @available_steps = data['available_steps']
       @current_move_unit_id = data['current_move_unit_id']
       @current_move_unit_available_steps = data['current_move_unit_available_steps']
     end
@@ -32,6 +33,7 @@ module JackalGame
         :units => @units.as_json,
         :loot => @loot.as_json,
         :current_move_player_id => @current_move_player_id,
+        :available_steps => @available_steps,
         :current_move_unit_id => @current_move_unit_id,
         :current_move_unit_available_steps => @current_move_unit_available_steps
       }
@@ -45,6 +47,7 @@ module JackalGame
 
     def start
       @current_move_player_id = 0
+      @available_steps = PathFinder.new(self).get_available_steps(@current_move_player_id)
     end
 
 

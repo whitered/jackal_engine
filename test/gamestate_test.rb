@@ -34,4 +34,5 @@ class GamestateTest < Minitest::Test
     assert_equal expected_tile, gamestate.map.at(action.location).value
   end
 
+
 end
