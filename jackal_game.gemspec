@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "minitest-autotest"
   spec.add_development_dependency "minitest-osx"
+  spec.add_development_dependency "hash_validator"
 end

@@ -22,7 +22,7 @@ module JackalGame
       @action = params['action']
       @unit = params['unit'].to_i
       @location = params['location'].to_i
-      @carried_loot = params['carried_loot'].to_i unless params['carried_loot'].nil? or params['carried_loot'] == ''
+      @carried_loot = (params['carried_loot'].to_s || '').empty? ? nil : params['carried_loot'].to_i
     end
 
 
@@ -30,8 +30,11 @@ module JackalGame
       return nil if @available_steps.nil?
       return nil if @available_steps.size > 1
 
-      params = { current_move_player_id: @current_move_player_id, unit: @unit }
-      params.carried_loot = @carried_loot unless @carried_loot.nil?
+      params = {
+        current_move_player_id: @current_move_player_id,
+        unit: @unit,
+        carried_loot: @carried_loot
+      }
       if @available_steps.empty?
         params['action'] = 'death'
         params['location'] = @location

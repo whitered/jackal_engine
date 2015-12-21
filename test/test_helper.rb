@@ -13,34 +13,12 @@ require 'json'
   end
 
 
-  def assert_includes_hash a, b
-    key = get_hash_difference a, b
-    assert_nil key, "Value of [#{key}] should be same"
+  def equals value
+    -> (v) { v == value }
   end
 
 
-  def refute_includes_hash a, b
-    key = get_hash_difference a, b
-    refute_nil key, "Values should not be the same"
+  def validate_hash hash, validations
+    validation = HashValidator.validate(hash, validations)
+    assert validation.valid?, "Invalid hash: " + validation.errors.to_s
   end
-
-
-  def get_hash_difference a, b
-    b.each_pair do |k, v|
-      if a.respond_to?(k)
-        l = a.send(k)
-      elsif a.is_a?(Hash)
-        l = a[k]
-      else
-        return k
-      end
-      if v.is_a?(Hash)
-        return k unless get_hash_difference(l, v).nil?
-      else
-        return k unless l == v
-      end
-    end
-    nil
-  end
-
-
