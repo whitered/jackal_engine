@@ -75,10 +75,10 @@ class GameGeneratorTest < Minitest::Test
   def test_initial_available_steps
     gamestate.start
     expected = {
-      0 => { false => [7, 5] },
-      1 => { false => [7, 20, 19, 18, 5] },
-      2 => { false => [7, 20, 19, 18, 5] },
-      3 => { false => [7, 20, 19, 18, 5] }
+      '0' => { 'false' => [7, 5] },
+      '1' => { 'false' => [7, 20, 19, 18, 5] },
+      '2' => { 'false' => [7, 20, 19, 18, 5] },
+      '3' => { 'false' => [7, 20, 19, 18, 5] }
     }
     assert_equal expected, gamestate.available_steps
   end

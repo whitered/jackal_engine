@@ -86,11 +86,11 @@ module JackalGame
       end
 
       location = action.location
-      unit_steps = @available_steps[unit.id]
+      unit_steps = @available_steps[unit.id.to_s]
       return 'wrong unit' if unit_steps.nil?
 
       has_loot = !!action.carried_loot
-      return 'wrong step' unless (unit_steps[has_loot] || []).include? location
+      return 'wrong step' unless (unit_steps[has_loot.to_s] || []).include? location
 
       tile = @map.at(location)
       carried_loot = @loot.find { |l| l.id == action.carried_loot } if action.carried_loot

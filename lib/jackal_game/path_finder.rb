@@ -118,9 +118,9 @@ module JackalGame
       units = @gamestate.units.each do |u|
         if u.player_id == player_id
           usteps = {}
-          usteps[false] = find_next_steps(u, nil, u.location, false)
-          usteps[true] = find_next_steps(u, nil, u.location, true) unless @gamestate.loot.find{ |l| l.location == u.location }.nil?
-          steps[u.id] = usteps
+          usteps[false.to_s] = find_next_steps(u, nil, u.location, false)
+          usteps[true.to_s] = find_next_steps(u, nil, u.location, true) unless @gamestate.loot.find{ |l| l.location == u.location }.nil?
+          steps[u.id.to_s] = usteps
         end
       end
       steps

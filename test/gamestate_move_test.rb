@@ -60,10 +60,10 @@ class GamestateMoveTest < Minitest::Test
   def test_move_updates_available_steps
     res = move 19
     expected_steps = {
-      4 => { false => [163, 161] },
-      5 => { false => [149, 150, 163, 161, 148] },
-      6 => { false => [136, 137, 150, 163, 162, 161, 148, 135] },
-      7 => { false => [122, 123, 136, 149, 148, 147, 134, 121] }
+      '4' => { 'false' => [163, 161] },
+      '5' => { 'false' => [149, 150, 163, 161, 148] },
+      '6' => { 'false' => [136, 137, 150, 163, 162, 161, 148, 135] },
+      '7' => { 'false' => [122, 123, 136, 149, 148, 147, 134, 121] }
     }
     assert_equal expected_steps, res.first.available_steps
     assert_equal expected_steps, @gamestate.available_steps
